@@ -1,0 +1,17 @@
+[
+  {"name": "adam",       "repo": "FujiNetWiFi/fujinet-go-adam-desktop",       "title": "FujiNet Go Adam"},
+  {"name": "apple2",     "repo": "FujiNetWiFi/fujinet-go-apple2-desktop",     "title": "FujiNet Go Apple II"},
+  {"name": "astrocade",  "repo": "FujiNetWiFi/fujinet-go-astrocade-desktop",  "title": "FujiNet Go Astrocade"},
+  {"name": "atari2600",  "repo": "FujiNetWiFi/fujinet-go-atari2600-desktop",  "title": "FujiNet Go Atari 2600"},
+  {"name": "atari7800",  "repo": "FujiNetWiFi/fujinet-go-atari7800-desktop",  "title": "FujiNet Go Atari 7800"},
+  {"name": "atari800",   "repo": "FujiNetWiFi/fujinet-go-atari800-desktop",   "title": "FujiNet Go Atari 8-bit"},
+  {"name": "coco",       "repo": "FujiNetWiFi/fujinet-go-coco-desktop",       "title": "FujiNet Go CoCo"},
+  {"name": "coleco",     "repo": "FujiNetWiFi/fujinet-go-coleco-desktop",     "title": "FujiNet Go ColecoVision"},
+  {"name": "h89",        "repo": "FujiNetWiFi/fujinet-go-h89-desktop",        "title": "FujiNet Go H89"},
+  {"name": "intv",       "repo": "FujiNetWiFi/fujinet-go-intv-desktop",       "title": "FujiNet Go Intellivision"},
+  {"name": "msdos",      "repo": "FujiNetWiFi/fujinet-go-msdos-desktop",      "title": "FujiNet Go MS-DOS"},
+  {"name": "msx",        "repo": "FujiNetWiFi/fujinet-go-msx-desktop",        "title": "FujiNet Go MSX"},
+  {"name": "nes",        "repo": "FujiNetWiFi/fujinet-go-nes-desktop",        "title": "FujiNet Go NES"},
+  {"name": "sms",        "repo": "FujiNetWiFi/fujinet-go-sms-desktop",        "title": "FujiNet Go Master System"},
+  {"name": "studio2",    "repo": "FujiNetWiFi/fujinet-go-studio2-desktop",    "title": "FujiNet Go Studio II"}
+]

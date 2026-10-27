@@ -1,0 +1,142 @@
+name: Build and publish flatpaks
+
+# Builds every FujiNet Go desktop app (GNOME and KDE frontends) from the
+# source of its latest published release and publishes them all as one
+# Flatpak remote on GitHub Pages (the gh-pages branch).
+#
+# Nothing else triggers a build: the schedule notices new releases within a
+# day, and a release workflow can ask for an immediate run with
+#   gh api repos/FujiNetWiFi/fujinet-go-desktop-flatpaks/dispatches -f event_type=app-released
+# Which flatpaks are stale is decided by versions.json on gh-pages.
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  repository_dispatch:
+    types: [app-released]
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Build only this app (e.g. nes); empty = every stale one'
+        required: false
+        default: ''
+      force:
+        description: 'Rebuild even when the published version is current'
+        type: boolean
+        default: false
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ONLY: ${{ inputs.only }}
+          FORCE: ${{ inputs.force }}
+        run: scripts/plan.sh
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.count != '0'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repo }}
+          ref: ${{ matrix.tag }}
+          path: src
+
+      - name: Install flatpak and flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists --user flathub \
+            https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Install the runtime and SDK this manifest targets
+        working-directory: src
+        run: |
+          manifest="${{ matrix.manifest }}"
+          runtime=$(sed -n 's/^runtime: *//p' "$manifest")
+          runtime_version=$(sed -n "s/^runtime-version: *'\(.*\)'/\1/p" "$manifest")
+          sdk=$(sed -n 's/^sdk: *//p' "$manifest")
+          flatpak install -y --user flathub \
+            "${runtime}/x86_64/${runtime_version}" \
+            "${sdk}/x86_64/${runtime_version}"
+
+      # --disable-rofiles-fuse because FUSE is not available to the runner user
+      - name: Build and export to a local repo
+        working-directory: src
+        run: |
+          flatpak-builder --user --force-clean --repo=repo \
+            --disable-rofiles-fuse build-flatpak "${{ matrix.manifest }}"
+
+      - name: Bundle into a single installable file
+        working-directory: src
+        run: |
+          mkdir ../out
+          flatpak build-bundle \
+            --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
+            repo "../out/${{ matrix.id }}.flatpak" "${{ matrix.id }}" master
+          echo "${{ matrix.tag }}" > "../out/${{ matrix.id }}.tag"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-${{ matrix.id }}
+          path: out/*
+          if-no-files-found: error
+
+  publish:
+    needs: [plan, build]
+    # publish whatever built, even if some matrix jobs failed
+    if: ${{ !cancelled() && needs.plan.outputs.count != '0' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install flatpak
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak ostree
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: flatpak-*
+
+      - name: Fetch the current remote
+        run: |
+          git clone --quiet --depth 1 --branch gh-pages \
+            "https://github.com/${GITHUB_REPOSITORY}" site \
+            || echo "no gh-pages branch yet"
+
+      - name: Import, sign and push
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.FLATPAK_GPG_PRIVATE_KEY }}
+          PUSH_TOKEN: ${{ github.token }}
+        run: scripts/publish.sh artifacts site
+
+      - name: Make sure Pages serves gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_ADMIN_TOKEN || github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/pages" --jq .html_url >/dev/null 2>&1 \
+            || echo "::warning::Pages is not enabled; set Settings > Pages > Source to the gh-pages branch"
