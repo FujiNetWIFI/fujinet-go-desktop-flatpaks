@@ -84,8 +84,13 @@ jobs:
       - name: Build and export to a local repo
         working-directory: src
         run: |
-          flatpak-builder --user --force-clean --repo=repo \
-            --disable-rofiles-fuse build-flatpak "${{ matrix.manifest }}"
+          # source downloads occasionally drop mid-TLS; the retry reuses what was fetched
+          for attempt in 1 2 3; do
+            flatpak-builder --user --force-clean --repo=repo \
+              --disable-rofiles-fuse build-flatpak "${{ matrix.manifest }}" && exit 0
+            echo "::warning::build attempt ${attempt} failed"
+          done
+          exit 1
 
       - name: Bundle into a single installable file
         working-directory: src

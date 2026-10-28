@@ -26,6 +26,8 @@ if [[ ! -d $site/.git ]]; then
 fi
 repo=$site/repo
 [[ -f $repo/config ]] || ostree init --mode=archive-z2 --repo="$repo"
+# git does not keep empty directories, so a repo cloned from gh-pages lacks these
+mkdir -p "$repo"/{refs/heads,refs/remotes,refs/mirrors,tmp,state,extensions}
 
 versions=$site/versions.json
 [[ -s $versions ]] || echo '{}' > "$versions"
