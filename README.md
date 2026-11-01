@@ -22,7 +22,8 @@ Single apps also install from `https://fujinetwifi.github.io/fujinet-go-desktop-
 3. `scripts/publish.sh` imports the bundles into the OSTree repo on `gh-pages`,
    signs it, regenerates appstream, and force-pushes a single commit. GitHub Pages serves it.
 
-Runs daily, on `repository_dispatch` (`app-released`), and by hand:
+Runs every 30 minutes (so a new release is picked up within half an hour), on
+`repository_dispatch` (`app-released`), and by hand:
 
 ```
 gh workflow run publish.yml -f only=nes      # one app

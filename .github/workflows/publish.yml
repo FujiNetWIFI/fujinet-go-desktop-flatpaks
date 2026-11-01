@@ -4,14 +4,15 @@ name: Build and publish flatpaks
 # source of its latest published release and publishes them all as one
 # Flatpak remote on GitHub Pages (the gh-pages branch).
 #
-# Nothing else triggers a build: the schedule notices new releases within a
-# day, and a release workflow can ask for an immediate run with
+# Nothing else triggers a build: the schedule notices new releases within half
+# an hour (planning is a few API calls; it builds only what is stale), and a
+# release workflow can ask for an immediate run with
 #   gh api repos/FujiNetWiFi/fujinet-go-desktop-flatpaks/dispatches -f event_type=app-released
 # Which flatpaks are stale is decided by versions.json on gh-pages.
 
 on:
   schedule:
-    - cron: '17 6 * * *'
+    - cron: '*/30 * * * *'
   repository_dispatch:
     types: [app-released]
   workflow_dispatch:
