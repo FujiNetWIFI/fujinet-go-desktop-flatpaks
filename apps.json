@@ -12,6 +12,7 @@
   {"name": "msdos",      "repo": "FujiNetWiFi/fujinet-go-msdos-desktop",      "title": "FujiNet Go MS-DOS"},
   {"name": "msx",        "repo": "FujiNetWiFi/fujinet-go-msx-desktop",        "title": "FujiNet Go MSX"},
   {"name": "nes",        "repo": "FujiNetWiFi/fujinet-go-nes-desktop",        "title": "FujiNet Go NES"},
+  {"name": "o2",         "repo": "FujiNetWiFi/fujinet-go-o2-desktop",         "title": "FujiNet Go Odyssey 2"},
   {"name": "sms",        "repo": "FujiNetWiFi/fujinet-go-sms-desktop",        "title": "FujiNet Go Master System"},
   {"name": "studio2",    "repo": "FujiNetWiFi/fujinet-go-studio2-desktop",    "title": "FujiNet Go Studio II"}
 ]
