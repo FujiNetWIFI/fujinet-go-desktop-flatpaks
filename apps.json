@@ -4,6 +4,7 @@
   {"name": "arcadia",    "repo": "FujiNetWiFi/fujinet-go-arcadia-desktop",    "title": "FujiNet Go Arcadia 2001"},
   {"name": "astrocade",  "repo": "FujiNetWiFi/fujinet-go-astrocade-desktop",  "title": "FujiNet Go Astrocade"},
   {"name": "atari2600",  "repo": "FujiNetWiFi/fujinet-go-atari2600-desktop",  "title": "FujiNet Go Atari 2600"},
+  {"name": "atari5200",  "repo": "FujiNetWiFi/fujinet-go-atari5200-desktop",  "title": "FujiNet Go Atari 5200"},
   {"name": "atari7800",  "repo": "FujiNetWiFi/fujinet-go-atari7800-desktop",  "title": "FujiNet Go Atari 7800"},
   {"name": "atari800",   "repo": "FujiNetWiFi/fujinet-go-atari800-desktop",   "title": "FujiNet Go Atari 8-bit"},
   {"name": "coco",       "repo": "FujiNetWiFi/fujinet-go-coco-desktop",       "title": "FujiNet Go CoCo"},
