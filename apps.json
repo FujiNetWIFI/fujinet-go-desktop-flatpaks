@@ -1,6 +1,7 @@
 [
   {"name": "adam",       "repo": "FujiNetWiFi/fujinet-go-adam-desktop",       "title": "FujiNet Go Adam"},
   {"name": "apple2",     "repo": "FujiNetWiFi/fujinet-go-apple2-desktop",     "title": "FujiNet Go Apple II"},
+  {"name": "arcadia",    "repo": "FujiNetWiFi/fujinet-go-arcadia-desktop",    "title": "FujiNet Go Arcadia 2001"},
   {"name": "astrocade",  "repo": "FujiNetWiFi/fujinet-go-astrocade-desktop",  "title": "FujiNet Go Astrocade"},
   {"name": "atari2600",  "repo": "FujiNetWiFi/fujinet-go-atari2600-desktop",  "title": "FujiNet Go Atari 2600"},
   {"name": "atari7800",  "repo": "FujiNetWiFi/fujinet-go-atari7800-desktop",  "title": "FujiNet Go Atari 7800"},
