@@ -7,6 +7,7 @@
   {"name": "atari5200",  "repo": "FujiNetWiFi/fujinet-go-atari5200-desktop",  "title": "FujiNet Go Atari 5200"},
   {"name": "atari7800",  "repo": "FujiNetWiFi/fujinet-go-atari7800-desktop",  "title": "FujiNet Go Atari 7800"},
   {"name": "atari800",   "repo": "FujiNetWiFi/fujinet-go-atari800-desktop",   "title": "FujiNet Go Atari 8-bit"},
+  {"name": "channelf",   "repo": "FujiNetWiFi/fujinet-go-channelf-desktop",   "title": "FujiNet Go Channel F"},
   {"name": "coco",       "repo": "FujiNetWiFi/fujinet-go-coco-desktop",       "title": "FujiNet Go CoCo"},
   {"name": "coleco",     "repo": "FujiNetWiFi/fujinet-go-coleco-desktop",     "title": "FujiNet Go ColecoVision"},
   {"name": "h89",        "repo": "FujiNetWiFi/fujinet-go-h89-desktop",        "title": "FujiNet Go H89"},
