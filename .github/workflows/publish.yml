@@ -34,12 +34,26 @@ permissions:
   contents: read
 
 jobs:
+  # All three jobs run in ubuntu:24.04 containers on the org's self-hosted
+  # runners (apt through the host cache), like the apps' own CI.
   plan:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, fujinet-builder]
+    container:
+      image: ubuntu:24.04
+      options: --add-host=host.docker.internal:host-gateway
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       count: ${{ steps.plan.outputs.count }}
     steps:
+      - name: Install base tools
+        shell: bash
+        run: |
+          MIRROR=http://mirrors.edge.kernel.org/ubuntu
+          (echo > /dev/tcp/host.docker.internal/3142) 2>/dev/null \
+            && MIRROR=http://host.docker.internal:3142/mirrors.edge.kernel.org/ubuntu
+          sed -i "s|http://[a-z.]*ubuntu.com/ubuntu|$MIRROR|" /etc/apt/sources.list.d/ubuntu.sources
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates curl jq gh
       - uses: actions/checkout@v4
 
       - id: plan
@@ -55,20 +69,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, fujinet-builder]
+    container:
+      image: ubuntu:24.04
+      options: --privileged --add-host=host.docker.internal:host-gateway
     steps:
+      # --privileged: flatpak-builder's bubblewrap sandbox needs user namespaces.
+      - name: Install flatpak and flatpak-builder
+        shell: bash
+        run: |
+          MIRROR=http://mirrors.edge.kernel.org/ubuntu
+          (echo > /dev/tcp/host.docker.internal/3142) 2>/dev/null \
+            && MIRROR=http://host.docker.internal:3142/mirrors.edge.kernel.org/ubuntu
+          sed -i "s|http://[a-z.]*ubuntu.com/ubuntu|$MIRROR|" /etc/apt/sources.list.d/ubuntu.sources
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates curl flatpak flatpak-builder elfutils unzip
+          flatpak remote-add --if-not-exists --user flathub \
+            https://dl.flathub.org/repo/flathub.flatpakrepo
+
       - uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repo }}
           ref: ${{ matrix.tag }}
           path: src
-
-      - name: Install flatpak and flatpak-builder
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder
-          flatpak remote-add --if-not-exists --user flathub \
-            https://dl.flathub.org/repo/flathub.flatpakrepo
 
       - name: Install the runtime and SDK this manifest targets
         working-directory: src
@@ -111,17 +134,28 @@ jobs:
   publish:
     needs: [plan, build]
     # publish whatever built, even if some matrix jobs failed
-    if: ${{ !cancelled() && needs.plan.outputs.count != '0' }}
-    runs-on: ubuntu-latest
+    # and only ever from main: a dispatch from another branch builds but never
+    # touches the public remote
+    if: ${{ !cancelled() && needs.plan.outputs.count != '0' && github.ref == 'refs/heads/main' }}
+    runs-on: [self-hosted, Linux, X64, fujinet-builder]
+    container:
+      image: ubuntu:24.04
+      options: --add-host=host.docker.internal:host-gateway
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install flatpak
+      - name: Install flatpak, ostree, gpg and git
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak ostree
+          MIRROR=http://mirrors.edge.kernel.org/ubuntu
+          (echo > /dev/tcp/host.docker.internal/3142) 2>/dev/null \
+            && MIRROR=http://host.docker.internal:3142/mirrors.edge.kernel.org/ubuntu
+          sed -i "s|http://[a-z.]*ubuntu.com/ubuntu|$MIRROR|" /etc/apt/sources.list.d/ubuntu.sources
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates curl jq gh gnupg flatpak ostree
+      - uses: actions/checkout@v4
+      - name: Mark the workspace safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - uses: actions/download-artifact@v4
         with:
