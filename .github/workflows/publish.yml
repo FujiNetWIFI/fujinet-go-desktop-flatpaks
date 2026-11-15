@@ -119,7 +119,7 @@ jobs:
       - name: Bundle into a single installable file
         working-directory: src
         run: |
-          mkdir ../out
+          rm -rf ../out && mkdir ../out
           flatpak build-bundle \
             --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
             repo "../out/${{ matrix.id }}.flatpak" "${{ matrix.id }}" master
