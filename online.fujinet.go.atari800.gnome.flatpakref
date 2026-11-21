@@ -1,0 +1,8 @@
+[Flatpak Ref]
+Title=online.fujinet.go.atari800.gnome
+Name=online.fujinet.go.atari800.gnome
+Branch=master
+Url=https://fujinetwifi.github.io/fujinet-go-desktop-flatpaks/repo/
+IsRuntime=false
+RuntimeRepo=https://dl.flathub.org/repo/flathub.flatpakrepo
+GPGKey=mDMEauEhmBYJKwYBBAHaRw8BAQdA+bKAXhoiMchyEk9hg5Esyzpqt21vpsO+MT1EP0kKAEe0LUZ1amlOZXQgR28gZmxhdHBha3MgPGZsYXRwYWtzQGZ1amluZXQub25saW5lPoiQBBMWCgA4FiEEGp45VLy5fW47i3bQbi9hiuNge1oFAmrhIZgCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQbi9hiuNge1pxxgD9FuiGJq7fYMH3qCwbd8dedPte/qfNqiba47UqL26ewIMBAOXH0KoLryekNUSX0lO2c2D6vXZ2e46MadFgCh/p5OEA
